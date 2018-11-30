@@ -4,7 +4,8 @@ const jwtKey = require('../_secrets/keys').jwtKey;
 
 module.exports = (req, res, next) => {
   // removed session add other protection here
-  const token = req.headers.authorization;
+  // const token = req.headers.authorization;
+  const token = req.get('Authorization');
   // need to add token to Postman (token is shown in login)
   // Headers
     //Key = Authorization

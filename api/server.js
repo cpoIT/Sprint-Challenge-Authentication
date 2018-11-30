@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const knex = require('knex');
+const axios = require('axios');
 
 
 const bcrypt = require('bcryptjs');
@@ -91,15 +92,15 @@ server.post('/api/login', (req, res) => {
     })
 })
 
-// server.get('/api/protected', protected, (req, res) => {
-//     db('users')
-//     .select('id', 'username', 'password')
-//     .first()
-//     .then(user => {
-//         res.status(200).json({ message: 'Logged into protected area', user: user.username})
-//     })
-//     .catch(err => res.send(err));
-// })
+server.get('/api/protected', authenticate, (req, res) => {
+    db('users')
+    .select('id', 'username', 'password')
+    .first()
+    .then(user => {
+        res.status(200).json({ message: 'Logged into protected area', user: user.username})
+    })
+    .catch(err => res.send(err));
+})
 
 // server.get('/api/users', (req, res) => {
 server.get('/api/users', authenticate, (req, res) => {
@@ -112,6 +113,20 @@ server.get('/api/users', authenticate, (req, res) => {
     })
     .catch(err => res.send(err));
 });
+
+server.get('/api/jokes', authenticate, (req, res) => {
+  axios
+    .get(
+      // 'https://08ad1pao69.execute-api.us-east-1.amazonaws.com/dev/random_ten'
+      'https://safe-falls-22549.herokuapp.com/random_ten'
+    )
+    .then(response => {
+      res.status(200).json(response.data);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Error Fetching Jokes', error: err });
+    });
+})
 
 
 server.get('/', (req, res) => {
